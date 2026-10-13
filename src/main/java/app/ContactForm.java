@@ -285,9 +285,9 @@ public class ContactForm extends javax.swing.JFrame {
 
     // --- изход с въпрос ----------------------------------------------------
 private boolean confirmExit() {
-    return JOptionPane.showConfirmDialog(this, "Наистина ли искате да излезете?",
-    "Изход", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
-    == JOptionPane.YES_OPTION;
+    Object[] options= {"Излез", "Остани"};
+   int choice= JOptionPane.showOptionDialog(this, "Наистина ли искате да излезете?","Изход", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[1]);
+return choice ==0;
 }
     
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
