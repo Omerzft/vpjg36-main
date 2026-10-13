@@ -6,7 +6,18 @@ import javax.swing.*;
 import java.util.*;
 
 public class LoginForm extends javax.swing.JFrame {
-     
+   
+
+private ImageIcon scaled(Image image, int w, int h) {
+        return new ImageIcon(image.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    }
+  
+    private void loadDefaultLock() {
+        java.net.URL url = getClass().getResource("/images/lock.png");
+        if (url != null) {
+            btnLogin.setIcon(scaled(new ImageIcon(url).getImage(), 24, 24));
+        }
+    }
  
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginForm.class.getName());
 
@@ -14,7 +25,7 @@ public class LoginForm extends javax.swing.JFrame {
    
     public LoginForm() {
         initComponents();
-    
+        loadDefaultLock();
         setLocationRelativeTo(null);
         normalBg = txtUser.getBackground();
     }
