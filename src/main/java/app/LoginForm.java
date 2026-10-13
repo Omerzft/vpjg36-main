@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.util.*;
 
 public class LoginForm extends javax.swing.JFrame {
-   
+   int br=0; 
 
 private ImageIcon scaled(Image image, int w, int h) {
         return new ImageIcon(image.getScaledInstance(w, h, Image.SCALE_SMOOTH));
@@ -128,6 +128,12 @@ private ImageIcon scaled(Image image, int w, int h) {
                     "Грешка",
                     JOptionPane.ERROR_MESSAGE);
            
+br++;
+            if(br>=3){
+        JOptionPane.showMessageDialog(this, "Достъпът е блокиран.", "Грешка", JOptionPane.ERROR_MESSAGE);
+       btnLogin.setEnabled(false); }
+
+
         }
         
         Arrays.fill(pass, '\0');
