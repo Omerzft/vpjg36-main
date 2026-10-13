@@ -43,6 +43,7 @@ public class ContactForm extends javax.swing.JFrame {
         txtEmail.setText("");
         cmbCountry.setSelectedIndex(0);
         lblStatus.setText("Готово");
+    
     }
     
     private ImageIcon scaled(Image image, int w, int h) {
@@ -238,7 +239,16 @@ public class ContactForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbCountryActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        clearFields();
+   int response = JOptionPane.showConfirmDialog(this,"Да изчистя ли всички полета?",
+        "Потвърждение", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+   if(response == JOptionPane.YES_OPTION){
+   clearFields();
+   lblStatus.setText("Полетата са изчистени.");}
+   else{
+           lblStatus.setText("Отказано.");
+           }
+  
+
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void miCountriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCountriesActionPerformed

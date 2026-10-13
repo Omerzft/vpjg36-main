@@ -6,13 +6,15 @@ import javax.swing.*;
 import java.util.*;
 
 public class LoginForm extends javax.swing.JFrame {
-    
+     
+ 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginForm.class.getName());
 
     private Color normalBg;
-    
+   
     public LoginForm() {
         initComponents();
+    
         setLocationRelativeTo(null);
         normalBg = txtUser.getBackground();
     }
@@ -95,6 +97,7 @@ public class LoginForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+  
         String expectedUser = "admin";
         char[] expectedPass = {'1','2','3','4','5','6'};
         String user = txtUser.getText();
@@ -113,13 +116,16 @@ public class LoginForm extends javax.swing.JFrame {
                     "Грешно име или парола", 
                     "Грешка",
                     JOptionPane.ERROR_MESSAGE);
+           
         }
+        
         Arrays.fill(pass, '\0');
         Arrays.fill(expectedPass, '\0');
     }//GEN-LAST:event_btnLoginActionPerformed
 
     public static void main(String args[]) {
         FlatLightLaf.setup();
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new LoginForm().setVisible(true));
     }
