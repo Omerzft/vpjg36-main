@@ -7,7 +7,6 @@ import java.util.*;
 
 public class LoginForm extends javax.swing.JFrame {
    int br=0; 
-
 private ImageIcon scaled(Image image, int w, int h) {
         return new ImageIcon(image.getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
@@ -28,6 +27,8 @@ private ImageIcon scaled(Image image, int w, int h) {
         loadDefaultLock();
         setLocationRelativeTo(null);
         normalBg = txtUser.getBackground();
+    setIconImage(new ImageIcon(getClass().getResource("/images/lock.png")).getImage());
+
     }
 
     @SuppressWarnings("unchecked")
