@@ -43,7 +43,7 @@ public class ContactForm extends javax.swing.JFrame {
         txtEmail.setText("");
         cmbCountry.setSelectedIndex(0);
         lblStatus.setText("Готово");
-    
+    loadDefaultAvatar();
     }
     
     private ImageIcon scaled(Image image, int w, int h) {
