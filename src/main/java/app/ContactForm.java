@@ -3,16 +3,19 @@ package app;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Image;
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.Color;
 
 public class ContactForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactForm.class.getName());
-
     private boolean bOnlyReqFields = false;
-    
     private JLabel lblHint; //декларираме, че такъв етикет ще има, но е null
-    
     private DefaultComboBoxModel<String> countries;
+    private final List<Contact> contacts = new ArrayList<>();
+    private Color normalBg;
+    
     
     public ContactForm() {
         initComponents();
@@ -34,6 +37,8 @@ public class ContactForm extends javax.swing.JFrame {
             countries.addElement(c);
         }
         loadDefaultAvatar();
+        normalBg = txtFirstName.getBackground();
+        addSamples();
     }
     
     private void clearFields(){
@@ -58,6 +63,48 @@ public class ContactForm extends javax.swing.JFrame {
         }
         lblPhoto.setIcon(scaled(new ImageIcon(url).getImage(), 120, 120));
     }
+private boolean reject(JTextField field, String message) {
+ field.setBackground(Color.RED);
+ field.requestFocus();
+ JOptionPane.showMessageDialog(this, message, "Непълни данни",
+ JOptionPane.WARNING_MESSAGE);
+ return false;
+}
+private boolean formIsValid() {
+ JTextField[] fields = {txtFirstName, txtLastName, txtCity, txtEmail};
+ for (JTextField f : fields) {
+ f.setBackground(normalBg); // първо назад към нормалното
+ }
+ if (txtFirstName.getText().isBlank())
+ return reject(txtFirstName, "Името е задължително.");
+ if (txtLastName.getText().isBlank())
+ return reject(txtLastName, "Фамилията е задължителна.");
+ if (txtCity.getText().isBlank())
+ return reject(txtCity, "Градът е задължителен.");
+ String email = txtEmail.getText().trim();
+ if (!email.isEmpty()) { // празен имейл е разрешен
+ int at = email.indexOf('@');
+ if (at < 1 || email.indexOf('.', at) < 0)
+ return reject(txtEmail, "Имейлът трябва да има @ и точка след него.");
+ }
+ return true;
+}
+private void addSamples() {
+ contacts.add(new Contact("Мария", "Петрова", "София",
+    "България", "m.petrova@example.bg"));
+ contacts.add(new Contact("Георги", "Иванов", "София",
+     "България", ""));
+ contacts.add(new Contact("Елена", "Димитрова", "Пловдив",
+    "България", "e.dimitrova@example.bg"));
+ contacts.add(new Contact("Николай", "Тодоров", "Пловдив",
+    "България", ""));
+ contacts.add(new Contact("Анна", "Стоянова", "Варна",
+    "България", "a.stoyanova@example.bg"));
+ contacts.add(new Contact("Петър", "Колев", "Варна",
+    "България", "p.kolev@example.bg"));
+ contacts.add(new Contact("Ивана", "Николова", "Бургас",
+    "България", "i.nikolova@example.bg"));
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -78,6 +125,7 @@ public class ContactForm extends javax.swing.JFrame {
         pnlButtons = new javax.swing.JPanel();
         btnSample = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
         lblPhoto = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -87,6 +135,7 @@ public class ContactForm extends javax.swing.JFrame {
         miRemoveCountry = new javax.swing.JMenuItem();
         miAddCountry = new javax.swing.JMenuItem();
         miPhoto = new javax.swing.JMenuItem();
+        miList = new javax.swing.JMenuItem();
         mnuView = new javax.swing.JMenu();
         miToggleFields = new javax.swing.JMenuItem();
 
@@ -144,6 +193,10 @@ public class ContactForm extends javax.swing.JFrame {
         btnClear.addActionListener(this::btnClearActionPerformed);
         pnlButtons.add(btnClear);
 
+        btnAdd.setText("Добави в списъка");
+        btnAdd.addActionListener(this::btnAddActionPerformed);
+        pnlButtons.add(btnAdd);
+
         pnlContact.add(pnlButtons, java.awt.BorderLayout.SOUTH);
         pnlContact.add(lblPhoto, java.awt.BorderLayout.LINE_END);
 
@@ -173,6 +226,10 @@ public class ContactForm extends javax.swing.JFrame {
         miPhoto.setText("Снимка...");
         miPhoto.addActionListener(this::miPhotoActionPerformed);
         mnuContacts.add(miPhoto);
+
+        miList.setText("Списък с контакти...");
+        miList.addActionListener(this::miListActionPerformed);
+        mnuContacts.add(miList);
 
         jMenuBar1.add(mnuContacts);
 
@@ -359,12 +416,31 @@ if (choice == 0) {
 // TODO add your handling code here:
     }//GEN-LAST:event_miPhotoActionPerformed
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+     
+ if (!formIsValid()) return;
+ Contact c = new Contact(
+ txtFirstName.getText().trim(), txtLastName.getText().trim(),
+ txtCity.getText().trim(), cmbCountry.getSelectedItem().toString(),
+ txtEmail.getText().trim());
+ contacts.add(c);
+ clearFields();
+ JOptionPane.showMessageDialog(this, "Добавен: " + c + ". Общо: " + contacts.size() +
+".");
+  // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void miListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miListActionPerformed
+     new ContactListForm(contacts).setVisible(true);   // TODO add your handling code here:
+    }//GEN-LAST:event_miListActionPerformed
+
     public static void main(String args[]) {
         FlatLightLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new ContactForm().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnSample;
     private javax.swing.JComboBox<String> cmbCountry;
@@ -378,6 +454,7 @@ if (choice == 0) {
     private javax.swing.JLabel lblStatus;
     private javax.swing.JMenuItem miAddCountry;
     private javax.swing.JMenuItem miCountries;
+    private javax.swing.JMenuItem miList;
     private javax.swing.JMenuItem miPhoto;
     private javax.swing.JMenuItem miRemoveCountry;
     private javax.swing.JMenuItem miSplitName;
