@@ -10,7 +10,7 @@ public class ContactListForm extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactListForm.class.getName());
     private final List<Contact> contacts;
     private DefaultListModel<Contact> listModel;
-
+    private Timer refreshTimer;
 
     public ContactListForm(List<Contact> contacts) {
         initComponents();
@@ -21,7 +21,8 @@ public class ContactListForm extends javax.swing.JFrame {
         lstContacts.setModel(listModel);
         show(this.contacts);
         applyFilter();
-   
+          refreshTimer = new Timer(5000, e -> applyFilter());
+        refreshTimer.start();
     }
     
 private void show(List<Contact> data) {
