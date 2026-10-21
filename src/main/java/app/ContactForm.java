@@ -255,6 +255,7 @@ private void addSamples() {
         txtCity.setText("Varna");
         cmbCountry.setSelectedItem("България");
         txtEmail.setText("georgi.penchev@ue-varna.bg");
+        showStatus("Примерен контакт е добавен.", 1000);
     }//GEN-LAST:event_btnSampleActionPerformed
 
     private void miSplitNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSplitNameActionPerformed
@@ -430,6 +431,7 @@ if (choice == 0) {
  clearFields();
  JOptionPane.showMessageDialog(this, "Добавен: " + c + ". Общо: " + contacts.size() +
 ".");
+ showStatus("Контактът е добавен ", 5000);
   // TODO add your handling code here:
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -441,10 +443,15 @@ if (choice == 0) {
         FlatLightLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new ContactForm().setVisible(true));
     }
- private void showStatus(String text) {
-       lblStatus.setText(text);
-        statusTimer.restart();
-    }
+ private void showStatus(String text, int ms) {
+    lblStatus.setText(text);
+    statusTimer.setInitialDelay(ms);
+    statusTimer.restart();
+}
+
+private void showStatus(String text) {
+    showStatus(text, 3000);
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;

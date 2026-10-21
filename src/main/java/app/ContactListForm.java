@@ -4,20 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 public class ContactListForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactListForm.class.getName());
     private final List<Contact> contacts;
     private DefaultListModel<Contact> listModel;
-    
+
+
     public ContactListForm(List<Contact> contacts) {
         initComponents();
+  
         this.contacts=contacts; //this.contacts e ukazatel kum sushtiq masiv
         setLocationRelativeTo(null);
         listModel = new DefaultListModel();
         lstContacts.setModel(listModel);
         show(this.contacts);
         applyFilter();
+   
     }
     
 private void show(List<Contact> data) {
@@ -219,7 +223,8 @@ applyFilter();
 applyFilter();        // TODO add your handling code here:
     }//GEN-LAST:event_btnReloadActionPerformed
 
-   
+  
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgCity;
