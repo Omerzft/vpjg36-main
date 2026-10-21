@@ -1,5 +1,5 @@
 package app;
-
+import javax.swing.Timer;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Image;
 import javax.swing.*;
@@ -8,17 +8,20 @@ import java.util.List;
 import java.awt.Color;
 
 public class ContactForm extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactForm.class.getName());
     private boolean bOnlyReqFields = false;
     private JLabel lblHint; //декларираме, че такъв етикет ще има, но е null
     private DefaultComboBoxModel<String> countries;
     private final List<Contact> contacts = new ArrayList<>();
     private Color normalBg;
-    
+    private Timer statusTimer;
     
     public ContactForm() {
+        
         initComponents();
+        statusTimer = new Timer(3000, e -> lblStatus.setText("Готово."));
+statusTimer.setRepeats(false);
         setLocationRelativeTo(null);
         cmbCountry.removeAllItems();
         String[] arrCountries = {"България","Германия","Франция","Канада"};
@@ -58,7 +61,7 @@ public class ContactForm extends javax.swing.JFrame {
     private void loadDefaultAvatar() {
         java.net.URL url = getClass().getResource("/images/avatar.png");
         if (url == null) {
-            lblStatus.setText("Липсва /images/avatar.png в target/classes");
+            showStatus("Липсва /images/avatar.png в target/classes");
             return;
         }
         lblPhoto.setIcon(scaled(new ImageIcon(url).getImage(), 120, 120));
@@ -262,7 +265,7 @@ private void addSamples() {
             txtFirstName.setText(names[0]);
             txtLastName.setText(names[1]);
         } catch (Exception e) {
-            lblStatus.setText("Грешка: Въведете две имена през интервал");
+            showStatus("Грешка: Въведете две имена през интервал");
         }
     }//GEN-LAST:event_miSplitNameActionPerformed
 
@@ -288,10 +291,10 @@ private void addSamples() {
     private void cmbCountryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCountryActionPerformed
         Object sel = cmbCountry.getSelectedItem();
         if(sel == null){
-            lblStatus.setText("Няма избрана държава");
+            showStatus("Няма избрана държава");
         }
         else{
-            lblStatus.setText(sel.toString());
+            showStatus(sel.toString());
         }
     }//GEN-LAST:event_cmbCountryActionPerformed
 
@@ -300,9 +303,9 @@ private void addSamples() {
         "Потвърждение", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
    if(response == JOptionPane.YES_OPTION){
    clearFields();
-   lblStatus.setText("Полетата са изчистени.");}
+   showStatus("Полетата са изчистени.");}
    else{
-           lblStatus.setText("Отказано.");
+           showStatus("Отказано.");
            }
   
 
@@ -313,7 +316,7 @@ private void addSamples() {
         for (int i = 0; i < countries.getSize(); i++) {
             all += countries.getElementAt(i) + ", ";
         }
-        lblStatus.setText("Държави (" + countries.getSize() + "): " + all);
+        showStatus("Държави (" + countries.getSize() + "): " + all);
     }//GEN-LAST:event_miCountriesActionPerformed
 
     private void miRemoveCountryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveCountryActionPerformed
@@ -400,7 +403,7 @@ if (choice == 0) {
         ImageIcon icon = new ImageIcon(file.getAbsolutePath());
 
         if (icon.getIconWidth() == -1) {
-            lblStatus.setText("");
+            showStatus("");
             return;
         }
 
@@ -408,7 +411,7 @@ if (choice == 0) {
             scaled(icon.getImage(), 120, 120)
         );
 
-        lblStatus.setText(file.getName());
+        showStatus(file.getName());
     }
 }
 
@@ -437,6 +440,10 @@ if (choice == 0) {
     public static void main(String args[]) {
         FlatLightLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new ContactForm().setVisible(true));
+    }
+ private void showStatus(String text) {
+       lblStatus.setText(text);
+        statusTimer.restart();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
