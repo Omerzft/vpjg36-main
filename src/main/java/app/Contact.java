@@ -59,9 +59,11 @@ public class Contact {
 
     @Override
     public String toString() {
+        if(email.isBlank()){
         return firstName + " " + lastName + "(" + city  + ")";
     }
-    
+        return firstName + " " + lastName + "(" + city + ")" + " "+email;
+    }
 
     
 }
