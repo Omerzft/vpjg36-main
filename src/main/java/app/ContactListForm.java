@@ -72,6 +72,7 @@ if (cityOk && emailOk) {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Контакти-Списък");
 
+        lstContacts.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstContacts.addListSelectionListener(this::lstContactsValueChanged);
         jScrollPane1.setViewportView(lstContacts);
 
@@ -199,15 +200,15 @@ lblDetails.setText(c.getFirstName() + " " + c.getLastName() + ", "
     }//GEN-LAST:event_lstContactsValueChanged
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-      Contact c = lstContacts.getSelectedValue();
-if (c == null) {
+      List<Contact> selected = lstContacts.getSelectedValuesList();
+if (selected.isEmpty()) {
  lblCount.setText("Маркирайте контакт.");
  return;
 }
 int answer = JOptionPane.showConfirmDialog(this,
- "Да изтрия ли " + c + "?", "Изтриване",
+ "Да се изтрият ли " + selected.size() + " контакта?", "Изтриване",
  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-if (answer == JOptionPane.YES_OPTION) {contacts.remove(c);
+if (answer == JOptionPane.YES_OPTION) {contacts.removeAll(selected);
 applyFilter();
 
  // TODO 2: изтрийте от данните и прерисувайте
