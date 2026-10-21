@@ -17,6 +17,7 @@ public class ContactListForm extends javax.swing.JFrame {
         listModel = new DefaultListModel();
         lstContacts.setModel(listModel);
         show(this.contacts);
+        applyFilter();
     }
     
 private void show(List<Contact> data) {
@@ -36,6 +37,8 @@ private String selectedCity() {
 private void applyFilter() {
  String city = selectedCity();
  List<Contact> result = new ArrayList<>();
+  contacts.sort((a, b) ->
+          a.getLastName().compareToIgnoreCase(b.getLastName()));
  for (Contact c : contacts) {
   boolean cityOk = city == null || c.getCity().equalsIgnoreCase(city);
 boolean emailOk = !chkEmail.isSelected() || !c.getEmail().isBlank();
