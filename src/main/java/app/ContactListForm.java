@@ -33,7 +33,7 @@ public class ContactListForm extends javax.swing.JFrame {
     listModel = new DefaultListModel<>();
     lstContacts.setModel(listModel);
     tblContacts.setModel(tableModel);
-    tblContacts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    tblContacts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     applyFilter();
     refreshTimer = new Timer(5000, e -> applyFilter());
     refreshTimer.start();
@@ -179,6 +179,7 @@ if (cityOk && emailOk) {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblContacts.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblContacts.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblContactsMouseClicked(evt);
@@ -360,7 +361,25 @@ newContact();        // TODO add your handling code here:
     }//GEN-LAST:event_miNewActionPerformed
 
     private void btnDelete1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelete1ActionPerformed
-    deleteSelected();    // TODO add your handling code here:
+  
+int[] rows = tblContacts.getSelectedRows();
+if(rows.length == 0){
+JOptionPane.showMessageDialog(this, "nothing is selected", "nothing", JOptionPane.INFORMATION_MESSAGE);
+return;}
+List<Contact> toDelete = new ArrayList<>();
+for (int viewRow : rows) {
+    int modelRow = tblContacts.convertRowIndexToModel(viewRow);
+   toDelete.add( shown.get( modelRow) );
+}
+
+int answer = JOptionPane.showConfirmDialog(this, "Изтриване на " + toDelete.size() + " контакта?", "Потвърждение", JOptionPane.YES_NO_OPTION);
+if (answer == JOptionPane.YES_OPTION) {
+ contacts.removeAll(toDelete);
+ applyFilter();
+}
+
+
+// TODO add your handling code here:
     }//GEN-LAST:event_btnDelete1ActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
