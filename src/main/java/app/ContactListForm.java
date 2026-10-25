@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 public class ContactListForm extends javax.swing.JFrame {
     
+    private boolean shortView = false;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactListForm.class.getName());
     private final List<Contact> contacts;
     private DefaultListModel<Contact> listModel;
@@ -48,7 +49,11 @@ private void show(List<Contact> data) {
     tableModel.setRowCount(0);   // this line is missing in your code
     for (Contact c : data) {
         listModel.addElement(c);
-        tableModel.addRow(c.getProperties());
+       
+        
+        if(shortView){tableModel.addRow(new String[]{ c.getFirstName(), c.getLastName()});
+    }else{tableModel.addRow(c.getProperties());
+        }
     }
     lblCount.setText("Показани: " + listModel.getSize()
             + " от " + contacts.size());
@@ -106,6 +111,7 @@ if (cityOk && emailOk) {
         miDetails = new javax.swing.JMenuItem();
         miDelete = new javax.swing.JMenuItem();
         miNew = new javax.swing.JMenuItem();
+        miShortView = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lstContacts = new javax.swing.JList<>();
@@ -135,6 +141,10 @@ if (cityOk && emailOk) {
         miNew.setText("Нов контакт");
         miNew.addActionListener(this::miNewActionPerformed);
         popRow.add(miNew);
+
+        miShortView.setText("Кратък изглед");
+        miShortView.addActionListener(this::miShortViewActionPerformed);
+        popRow.add(miShortView);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Контакти-Списък");
@@ -205,7 +215,7 @@ if (cityOk && emailOk) {
         btnSearch.setText("Търси");
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
-        CSVBtn.setText("CSV");
+        CSVBtn.setText("Запази като CSV");
         CSVBtn.addActionListener(this::CSVBtnActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -231,12 +241,16 @@ if (cityOk && emailOk) {
                     .addComponent(rbPlovdiv)
                     .addComponent(rbVarna, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete)
-                    .addComponent(chkEmail)
-                    .addComponent(CSVBtn))
+                    .addComponent(chkEmail))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnDelete1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnDelete1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(CSVBtn))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -440,7 +454,7 @@ if(evt.getClickCount() ==2 )
     private void CSVBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CSVBtnActionPerformed
      StringBuilder sb = new StringBuilder();
 for (Contact c : shown) {
-    sb.append( c.getFirstName()+","+c.getLastName()+","+c.getCity() ).append("\n");
+    sb.append( c.getFirstName()+","+c.getLastName()+","+c.getCity() +","+c.getCountry()+","+c.getEmail()).append("\n");
 }
 
 try {
@@ -450,6 +464,16 @@ try {
    JOptionPane.showMessageDialog(this, "error", "message", JOptionPane.ERROR_MESSAGE);
 }   // TODO add your handling code here:
     }//GEN-LAST:event_CSVBtnActionPerformed
+
+    private void miShortViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miShortViewActionPerformed
+    shortView = !shortView;
+if (shortView) {
+tableModel.setColumnIdentifiers(new String[]{ "Име", "Фамилия"  });
+} else {
+     tableModel.setColumnIdentifiers(new String[]{   "Име", "Фамилия","Град","Държава","Имейл"});
+}
+show(shown);  // TODO add your handling code here:
+    }//GEN-LAST:event_miShortViewActionPerformed
 
     private void showDetails() {
         Contact c = selected();
@@ -509,6 +533,7 @@ try {
     private javax.swing.JMenuItem miDelete;
     private javax.swing.JMenuItem miDetails;
     private javax.swing.JMenuItem miNew;
+    private javax.swing.JMenuItem miShortView;
     private javax.swing.JPopupMenu popRow;
     private javax.swing.JRadioButton rbAll;
     private javax.swing.JRadioButton rbPlovdiv;

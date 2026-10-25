@@ -34,6 +34,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miNewActionPerformed"/>
           </Events>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="miShortView">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&#x41a;&#x440;&#x430;&#x442;&#x44a;&#x43a; &#x438;&#x437;&#x433;&#x43b;&#x435;&#x434;"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miShortViewActionPerformed"/>
+          </Events>
+        </MenuItem>
       </SubComponents>
     </Container>
   </NonVisualComponents>
@@ -106,12 +114,18 @@
                       <Component id="rbVarna" alignment="0" min="-2" pref="138" max="-2" attributes="0"/>
                       <Component id="btnDelete" min="-2" max="-2" attributes="0"/>
                       <Component id="chkEmail" min="-2" max="-2" attributes="0"/>
-                      <Component id="CSVBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnDelete1" min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" min="-2" pref="452" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="btnDelete1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="CSVBtn" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="jScrollPane2" min="-2" pref="452" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -310,7 +324,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="CSVBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="CSV"/>
+            <Property name="text" type="java.lang.String" value="&#x417;&#x430;&#x43f;&#x430;&#x437;&#x438; &#x43a;&#x430;&#x442;&#x43e; CSV"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CSVBtnActionPerformed"/>
