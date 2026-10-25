@@ -1,6 +1,9 @@
 
 package app;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -119,6 +122,7 @@ if (cityOk && emailOk) {
         tblContacts = new javax.swing.JTable();
         btnDelete1 = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
+        CSVBtn = new javax.swing.JButton();
 
         miDetails.setText("Подробности");
         miDetails.addActionListener(this::miDetailsActionPerformed);
@@ -201,6 +205,9 @@ if (cityOk && emailOk) {
         btnSearch.setText("Търси");
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
+        CSVBtn.setText("CSV");
+        CSVBtn.addActionListener(this::CSVBtnActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -224,7 +231,8 @@ if (cityOk && emailOk) {
                     .addComponent(rbPlovdiv)
                     .addComponent(rbVarna, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete)
-                    .addComponent(chkEmail))
+                    .addComponent(chkEmail)
+                    .addComponent(CSVBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnDelete1)
@@ -239,7 +247,9 @@ if (cityOk && emailOk) {
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnDelete1))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnDelete1)
+                            .addComponent(CSVBtn)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -427,6 +437,20 @@ if(evt.getClickCount() ==2 )
 }     // TODO add your handling code here:
     }//GEN-LAST:event_tblContactsMouseClicked
 
+    private void CSVBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CSVBtnActionPerformed
+     StringBuilder sb = new StringBuilder();
+for (Contact c : shown) {
+    sb.append( c.getFirstName()+","+c.getLastName()+","+c.getCity() ).append("\n");
+}
+
+try {
+    Files.writeString(Path.of("contacts.csv"), sb.toString());
+  JOptionPane.showMessageDialog(this, "saved " + Path.of("contacts.csv").toAbsolutePath(), "message", JOptionPane.INFORMATION_MESSAGE);
+} catch (IOException ex) {
+   JOptionPane.showMessageDialog(this, "error", "message", JOptionPane.ERROR_MESSAGE);
+}   // TODO add your handling code here:
+    }//GEN-LAST:event_CSVBtnActionPerformed
+
     private void showDetails() {
         Contact c = selected();
         if (c == null) return;
@@ -469,6 +493,7 @@ if(evt.getClickCount() ==2 )
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton CSVBtn;
     private javax.swing.ButtonGroup bgCity;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDelete1;
