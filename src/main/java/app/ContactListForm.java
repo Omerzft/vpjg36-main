@@ -1,37 +1,54 @@
 
 package app;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.table.DefaultTableModel;
 public class ContactListForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactListForm.class.getName());
     private final List<Contact> contacts;
     private DefaultListModel<Contact> listModel;
     private Timer refreshTimer;
-
+ private String[] COLUMNS = {"Име","Фамилия","Град","Държава","Имейл"};
+    private DefaultTableModel tableModel = new DefaultTableModel(COLUMNS, 0)
+    {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // нито една клетка няма да се редактира
+        }
+    };
+    private List<Contact> shown; //ще пази видимите елементи в таблицата
+    
     public ContactListForm(List<Contact> contacts) {
-        initComponents();
-  
-        this.contacts=contacts; //this.contacts e ukazatel kum sushtiq masiv
-        setLocationRelativeTo(null);
-        listModel = new DefaultListModel();
-        lstContacts.setModel(listModel);
-        show(this.contacts);
-        applyFilter();
-          refreshTimer = new Timer(5000, e -> applyFilter());
-        refreshTimer.start();
-    }
+    initComponents();
+    this.contacts = contacts;
+    setLocationRelativeTo(null);
+    listModel = new DefaultListModel<>();
+    lstContacts.setModel(listModel);
+    tblContacts.setModel(tableModel);
+    tblContacts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    applyFilter();
+    refreshTimer = new Timer(5000, e -> applyFilter());
+    refreshTimer.start();
+}
     
 private void show(List<Contact> data) {
- listModel.clear();
- for (Contact c : data) {
- listModel.addElement(c);
- }
- lblCount.setText("Показани: " + listModel.getSize()
- + " от " + contacts.size());
+    shown = data;
+    listModel.clear();
+    tableModel.setRowCount(0);   // this line is missing in your code
+    for (Contact c : data) {
+        listModel.addElement(c);
+        tableModel.addRow(c.getProperties());
+    }
+    lblCount.setText("Показани: " + listModel.getSize()
+            + " от " + contacts.size());
 }
 private String selectedCity() {
  if (rbSofia.isSelected()) return "София";
@@ -56,11 +73,36 @@ if (cityOk && emailOk) {
  show(result);
 }
    
+    private Contact selected() {
+        int row = tblContacts.getSelectedRow();
+        if (row < 0) { // −1: нищо не е маркирано
+            lblCount.setText("Маркирайте контакт.");
+            return null;
+        }
+        Contact c = shown.get(row);
+        return c;
+    }
+    private void deleteSelected() {
+        Contact c = selected();
+        if (c == null) return;
+        int answer = JOptionPane.showConfirmDialog(this,
+            "Да изтрия ли " + c + "?", "Изтриване",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (answer == JOptionPane.YES_OPTION) {
+            //изтриваме обекта от масива с данни
+            contacts.remove(c);
+            applyFilter(); //презареждаме данните в таблицата и листа
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         bgCity = new javax.swing.ButtonGroup();
+        popRow = new javax.swing.JPopupMenu();
+        miDetails = new javax.swing.JMenuItem();
+        miDelete = new javax.swing.JMenuItem();
+        miNew = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lstContacts = new javax.swing.JList<>();
@@ -73,6 +115,21 @@ if (cityOk && emailOk) {
         btnDelete = new javax.swing.JButton();
         chkEmail = new javax.swing.JCheckBox();
         btnReload = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblContacts = new javax.swing.JTable();
+        btnDelete1 = new javax.swing.JButton();
+
+        miDetails.setText("Подробности");
+        miDetails.addActionListener(this::miDetailsActionPerformed);
+        popRow.add(miDetails);
+
+        miDelete.setText("Изтрий");
+        miDelete.addActionListener(this::miDeleteActionPerformed);
+        popRow.add(miDelete);
+
+        miNew.setText("Нов контакт");
+        miNew.addActionListener(this::miNewActionPerformed);
+        popRow.add(miNew);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Контакти-Списък");
@@ -110,6 +167,32 @@ if (cityOk && emailOk) {
         btnReload.setText("Презареди");
         btnReload.addActionListener(this::btnReloadActionPerformed);
 
+        tblContacts.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblContacts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblContactsMousePressed(evt);
+            }
+        });
+        tblContacts.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tblContactsKeyPressed(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblContacts);
+
+        btnDelete1.setText("Изтрий маркирания ред");
+        btnDelete1.addActionListener(this::btnDelete1ActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -133,33 +216,44 @@ if (cityOk && emailOk) {
                             .addComponent(rbVarna, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnDelete)
                             .addComponent(chkEmail))))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnDelete1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(rbAll)
+                                .addGap(18, 18, 18)
+                                .addComponent(rbSofia)
+                                .addGap(18, 18, 18)
+                                .addComponent(rbPlovdiv)
+                                .addGap(18, 18, 18)
+                                .addComponent(rbVarna)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(chkEmail)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnDelete))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCount)
+                            .addComponent(btnReload))
+                        .addGap(15, 15, 15)
+                        .addComponent(lblDetails))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(rbAll)
-                        .addGap(18, 18, 18)
-                        .addComponent(rbSofia)
-                        .addGap(18, 18, 18)
-                        .addComponent(rbPlovdiv)
-                        .addGap(18, 18, 18)
-                        .addComponent(rbVarna)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(chkEmail)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnDelete))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblCount)
-                    .addComponent(btnReload))
-                .addGap(15, 15, 15)
-                .addComponent(lblDetails)
-                .addContainerGap(18, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(btnDelete1)
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -167,8 +261,8 @@ if (cityOk && emailOk) {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,22 +318,99 @@ applyFilter();
 applyFilter();        // TODO add your handling code here:
     }//GEN-LAST:event_btnReloadActionPerformed
 
-  
+    private void tblContactsKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblContactsKeyPressed
+      if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
+            deleteSelected();
+        } // TODO add your handling code here:
+    }//GEN-LAST:event_tblContactsKeyPressed
+
+    private void tblContactsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblContactsMousePressed
+            if(SwingUtilities.isRightMouseButton(evt) == false)
+            return;
+        //връща индекса на реда, натиснат с десния бутон на мишката
+        int row = tblContacts.rowAtPoint(evt.getPoint());
+        tblContacts.setRowSelectionInterval(row, row);
+        popRow.show(evt.getComponent(), evt.getX(), evt.getY());
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblContactsMousePressed
+
+    private void miDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDetailsActionPerformed
+showDetails();        // TODO add your handling code here:
+    }//GEN-LAST:event_miDetailsActionPerformed
+
+    private void miDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeleteActionPerformed
+       deleteSelected();  // TODO add your handling code here:
+    }//GEN-LAST:event_miDeleteActionPerformed
+
+    private void miNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewActionPerformed
+newContact();        // TODO add your handling code here:
+    }//GEN-LAST:event_miNewActionPerformed
+
+    private void btnDelete1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelete1ActionPerformed
+    deleteSelected();    // TODO add your handling code here:
+    }//GEN-LAST:event_btnDelete1ActionPerformed
+
+    private void showDetails() {
+        Contact c = selected();
+        if (c == null) return;
+        String email = c.getEmail().isBlank() ? "без имейл" : c.getEmail();
+        //в момента toString връща име, фамилия и град
+        lblDetails.setText(c.toString() + " " + c.getCountry() + " " + email);
+    }
+    
+    private void newContact() {
+        JTextField txtFirstName = new JTextField();
+        JTextField txtLastName = new JTextField();
+        JTextField txtCity = new JTextField();
+        JTextField txtCountry = new JTextField();
+        JTextField txtEmail = new JTextField();
+        Object[] content = {"Име:", txtFirstName, "Фамилия:", txtLastName,
+            "Град:", txtCity, "Държава:", txtCountry,
+            "Имейл:", txtEmail
+        };
+        int answer = JOptionPane.showConfirmDialog(this, content, "Нов контакт",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (answer != JOptionPane.OK_OPTION) return; // Cancel или X
+        if (txtFirstName.getText().isBlank() || txtLastName.getText().isBlank()
+            || txtCity.getText().isBlank()) 
+        {
+            JOptionPane.showMessageDialog(this, "Име, фамилия и град са задължителни.",
+            "Непълни данни", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+            Contact c = new Contact(
+                txtFirstName.getText().trim(), txtLastName.getText().trim(),
+                txtCity.getText().trim(), txtCountry.getText().trim(),
+                txtEmail.getText().trim()
+            );
+            contacts.add(c);
+            applyFilter();
+            int row = shown.indexOf(c);
+            if (row >= 0) tblContacts.setRowSelectionInterval(row, row);
+            else lblCount.setText("Добавен, но филтърът го крие.");
+        }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgCity;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDelete1;
     private javax.swing.JButton btnReload;
     private javax.swing.JCheckBox chkEmail;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblCount;
     private javax.swing.JLabel lblDetails;
     private javax.swing.JList<Contact> lstContacts;
+    private javax.swing.JMenuItem miDelete;
+    private javax.swing.JMenuItem miDetails;
+    private javax.swing.JMenuItem miNew;
+    private javax.swing.JPopupMenu popRow;
     private javax.swing.JRadioButton rbAll;
     private javax.swing.JRadioButton rbPlovdiv;
     private javax.swing.JRadioButton rbSofia;
     private javax.swing.JRadioButton rbVarna;
+    private javax.swing.JTable tblContacts;
     // End of variables declaration//GEN-END:variables
 }

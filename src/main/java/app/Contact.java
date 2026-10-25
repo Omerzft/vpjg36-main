@@ -65,5 +65,7 @@ public class Contact {
         return firstName + " " + lastName + "(" + city + ")" + " "+email;
     }
 
-    
+     public Object[] getProperties(){
+        return new Object[] {firstName, lastName, city, country, email};
+    }
 }

@@ -1,6 +1,9 @@
 app\ContactForm.class
+app\ContactListForm$3.class
+app\ContactListForm$2.class
 app\LoginForm.class
 app\Base.class
 app\Contact.class
+app\ContactListForm$1.class
 app\ContactListForm.class
 app\ContactForm$1.class
