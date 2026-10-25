@@ -118,6 +118,7 @@ if (cityOk && emailOk) {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblContacts = new javax.swing.JTable();
         btnDelete1 = new javax.swing.JButton();
+        btnSearch = new javax.swing.JButton();
 
         miDetails.setText("Подробности");
         miDetails.addActionListener(this::miDetailsActionPerformed);
@@ -140,7 +141,7 @@ if (cityOk && emailOk) {
 
         lblCount.setText("jLabel1");
 
-        lblDetails.setText("jLabel2");
+        lblDetails.setText("Подробности");
 
         bgCity.add(rbAll);
         rbAll.setSelected(true);
@@ -179,6 +180,9 @@ if (cityOk && emailOk) {
             }
         ));
         tblContacts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblContactsMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblContactsMousePressed(evt);
             }
@@ -193,29 +197,33 @@ if (cityOk && emailOk) {
         btnDelete1.setText("Изтрий маркирания ред");
         btnDelete1.addActionListener(this::btnDelete1ActionPerformed);
 
+        btnSearch.setText("Търси");
+        btnSearch.addActionListener(this::btnSearchActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblDetails)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(lblCount)
-                                .addGap(45, 45, 45)
-                                .addComponent(btnReload))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(54, 54, 54)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rbAll)
-                            .addComponent(rbSofia)
-                            .addComponent(rbPlovdiv)
-                            .addComponent(rbVarna, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnDelete)
-                            .addComponent(chkEmail))))
+                            .addComponent(lblCount)
+                            .addComponent(lblDetails, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(45, 45, 45)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnReload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(54, 54, 54)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rbAll)
+                    .addComponent(rbSofia)
+                    .addComponent(rbPlovdiv)
+                    .addComponent(rbVarna, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete)
+                    .addComponent(chkEmail))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnDelete1)
@@ -226,6 +234,11 @@ if (cityOk && emailOk) {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDelete1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -246,27 +259,27 @@ if (cityOk && emailOk) {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblCount)
                             .addComponent(btnReload))
-                        .addGap(15, 15, 15)
-                        .addComponent(lblDetails))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(btnDelete1)
-                .addContainerGap(41, Short.MAX_VALUE))
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblDetails)
+                            .addComponent(btnSearch))))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -350,6 +363,43 @@ newContact();        // TODO add your handling code here:
     deleteSelected();    // TODO add your handling code here:
     }//GEN-LAST:event_btnDelete1ActionPerformed
 
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+String input = JOptionPane.showInputDialog(this, "Въведено име"); 
+if(input != null){
+    boolean found = false;
+        input=input.trim().toLowerCase();
+                for( Contact c : contacts){
+                    String word =  c.getFirstName();
+                    String wordt = c.getLastName();
+                    boolean ok = word.toLowerCase().contains(input);
+                   boolean okt = wordt.toLowerCase().contains(input);
+                    
+                  if (ok || okt){
+                       int modelRow = shown.indexOf(c);
+                     found=true;
+    if (modelRow == -1) { JOptionPane.showMessageDialog(this, "Съществува, но филтърът го крие",
+            "търсене", JOptionPane.WARNING_MESSAGE);
+       
+    } else {
+        int viewRow = tblContacts.convertRowIndexToView(modelRow);
+       tblContacts.setRowSelectionInterval( viewRow,viewRow ); // select this row in tblContacts
+    }
+    
+    break;
+    
+                }
+                }if(!found){
+        JOptionPane.showMessageDialog(this, "няма съществуващ контакт с името",
+            "търсене", JOptionPane.WARNING_MESSAGE);
+    }
+                }    
+// TODO add your handling code here:
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void tblContactsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblContactsMouseClicked
+   // TODO add your handling code here:
+    }//GEN-LAST:event_tblContactsMouseClicked
+
     private void showDetails() {
         Contact c = selected();
         if (c == null) return;
@@ -396,6 +446,7 @@ newContact();        // TODO add your handling code here:
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDelete1;
     private javax.swing.JButton btnReload;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JCheckBox chkEmail;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
