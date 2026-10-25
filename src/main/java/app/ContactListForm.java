@@ -397,7 +397,15 @@ if(input != null){
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void tblContactsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblContactsMouseClicked
-   // TODO add your handling code here:
+if(evt.getClickCount() ==2 )
+{ int viewRow = tblContacts.rowAtPoint(evt.getPoint());
+        if(viewRow >=0){
+            int modelRow = tblContacts.convertRowIndexToModel(viewRow);
+            Contact c = shown.get(modelRow);
+            JOptionPane.showMessageDialog(this, c.getProperties(), "Подробности", JOptionPane.INFORMATION_MESSAGE);
+}
+
+}     // TODO add your handling code here:
     }//GEN-LAST:event_tblContactsMouseClicked
 
     private void showDetails() {
