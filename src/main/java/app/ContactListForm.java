@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -14,6 +15,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 public class ContactListForm extends javax.swing.JFrame {
+    
+    private DefaultComboBoxModel<String> cities;
+  
     
     private boolean shortView = false;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactListForm.class.getName());
@@ -32,6 +36,12 @@ public class ContactListForm extends javax.swing.JFrame {
     
     public ContactListForm(List<Contact> contacts) {
     initComponents();
+    cities = new DefaultComboBoxModel<>();
+    String[] arrCities = {"Всички", "София", "Пловдив", "Варна"};
+        for (String c : arrCities){
+    cities.addElement(c);
+}
+    cmbCity.setModel(cities);
     this.contacts = contacts;
     setLocationRelativeTo(null);
     listModel = new DefaultListModel<>();
@@ -58,12 +68,7 @@ private void show(List<Contact> data) {
     lblCount.setText("Показани: " + listModel.getSize()
             + " от " + contacts.size());
 }
-private String selectedCity() {
- if (rbSofia.isSelected()) return "София";
- if (rbPlovdiv.isSelected()) return "Пловдив";
- if (rbVarna.isSelected()) return "Варна";
- return null; // „Всички“
-}
+
 private void applyFilter() {
  String city = selectedCity();
  List<Contact> result = new ArrayList<>();
@@ -117,10 +122,6 @@ if (cityOk && emailOk) {
         lstContacts = new javax.swing.JList<>();
         lblCount = new javax.swing.JLabel();
         lblDetails = new javax.swing.JLabel();
-        rbAll = new javax.swing.JRadioButton();
-        rbSofia = new javax.swing.JRadioButton();
-        rbPlovdiv = new javax.swing.JRadioButton();
-        rbVarna = new javax.swing.JRadioButton();
         btnDelete = new javax.swing.JButton();
         chkEmail = new javax.swing.JCheckBox();
         btnReload = new javax.swing.JButton();
@@ -129,6 +130,7 @@ if (cityOk && emailOk) {
         btnDelete1 = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         CSVBtn = new javax.swing.JButton();
+        cmbCity = new javax.swing.JComboBox<>();
 
         miDetails.setText("Подробности");
         miDetails.addActionListener(this::miDetailsActionPerformed);
@@ -156,23 +158,6 @@ if (cityOk && emailOk) {
         lblCount.setText("jLabel1");
 
         lblDetails.setText("Подробности");
-
-        bgCity.add(rbAll);
-        rbAll.setSelected(true);
-        rbAll.setText("Всички");
-        rbAll.addActionListener(this::rbAllActionPerformed);
-
-        bgCity.add(rbSofia);
-        rbSofia.setText("София");
-        rbSofia.addActionListener(this::rbSofiaActionPerformed);
-
-        bgCity.add(rbPlovdiv);
-        rbPlovdiv.setText("Пловдив");
-        rbPlovdiv.addActionListener(this::rbPlovdivActionPerformed);
-
-        bgCity.add(rbVarna);
-        rbVarna.setText("Варна");
-        rbVarna.addActionListener(this::rbVarnaActionPerformed);
 
         btnDelete.setText("Изтрий");
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
@@ -218,6 +203,10 @@ if (cityOk && emailOk) {
         CSVBtn.setText("Запази като CSV");
         CSVBtn.addActionListener(this::CSVBtnActionPerformed);
 
+        cmbCity.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbCity.addItemListener(this::cmbCityItemStateChanged);
+        cmbCity.addActionListener(this::cmbCityActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -236,13 +225,10 @@ if (cityOk && emailOk) {
                             .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(54, 54, 54)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(rbAll)
-                    .addComponent(rbSofia)
-                    .addComponent(rbPlovdiv)
-                    .addComponent(rbVarna, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete)
-                    .addComponent(chkEmail))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(chkEmail)
+                    .addComponent(cmbCity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(55, 55, 55)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnDelete1)
@@ -258,37 +244,32 @@ if (cityOk && emailOk) {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(299, 299, 299)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnDelete1)
                             .addComponent(CSVBtn)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(rbAll)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbSofia)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbPlovdiv)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbVarna)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(chkEmail)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnDelete))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblCount)
-                            .addComponent(btnReload))
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblDetails)
-                            .addComponent(btnSearch))))
-                .addContainerGap())
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(cmbCity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(chkEmail)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btnDelete))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblCount)
+                                    .addComponent(btnReload))
+                                .addGap(12, 12, 12)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblDetails)
+                                    .addComponent(btnSearch)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -309,22 +290,6 @@ if (cityOk && emailOk) {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void rbAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAllActionPerformed
-applyFilter();        // TODO add your handling code here:
-    }//GEN-LAST:event_rbAllActionPerformed
-
-    private void rbPlovdivActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbPlovdivActionPerformed
-applyFilter();          // TODO add your handling code here:
-    }//GEN-LAST:event_rbPlovdivActionPerformed
-
-    private void rbSofiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbSofiaActionPerformed
-applyFilter();          // TODO add your handling code here:
-    }//GEN-LAST:event_rbSofiaActionPerformed
-
-    private void rbVarnaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbVarnaActionPerformed
-applyFilter();          // TODO add your handling code here:
-    }//GEN-LAST:event_rbVarnaActionPerformed
 
     private void lstContactsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstContactsValueChanged
         if (evt.getValueIsAdjusting()) return; // изборът още се мени
@@ -475,6 +440,14 @@ tableModel.setColumnIdentifiers(new String[]{ "Име", "Фамилия"  });
 show(shown);  // TODO add your handling code here:
     }//GEN-LAST:event_miShortViewActionPerformed
 
+    private void cmbCityItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCityItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbCityItemStateChanged
+
+    private void cmbCityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCityActionPerformed
+applyFilter();   // TODO add your handling code here:
+    }//GEN-LAST:event_cmbCityActionPerformed
+
     private void showDetails() {
         Contact c = selected();
         if (c == null) return;
@@ -514,6 +487,13 @@ show(shown);  // TODO add your handling code here:
             if (row >= 0) tblContacts.setRowSelectionInterval(row, row);
             else lblCount.setText("Добавен, но филтърът го крие.");
         }
+private String selectedCity(){
+    String item = (String) cmbCity.getSelectedItem();
+    if ( "Всички".equals(item) ) {
+        return null;
+    }
+    return item;
+}     
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -524,6 +504,7 @@ show(shown);  // TODO add your handling code here:
     private javax.swing.JButton btnReload;
     private javax.swing.JButton btnSearch;
     private javax.swing.JCheckBox chkEmail;
+    private javax.swing.JComboBox<String> cmbCity;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -535,10 +516,6 @@ show(shown);  // TODO add your handling code here:
     private javax.swing.JMenuItem miNew;
     private javax.swing.JMenuItem miShortView;
     private javax.swing.JPopupMenu popRow;
-    private javax.swing.JRadioButton rbAll;
-    private javax.swing.JRadioButton rbPlovdiv;
-    private javax.swing.JRadioButton rbSofia;
-    private javax.swing.JRadioButton rbVarna;
     private javax.swing.JTable tblContacts;
     // End of variables declaration//GEN-END:variables
 }

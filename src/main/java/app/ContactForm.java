@@ -176,6 +176,7 @@ private void addSamples() {
         pnlFields.add(lblCountry);
 
         cmbCountry.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbCountry.addItemListener(this::cmbCountryItemStateChanged);
         cmbCountry.addActionListener(this::cmbCountryActionPerformed);
         pnlFields.add(cmbCountry);
 
@@ -438,6 +439,10 @@ if (choice == 0) {
     private void miListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miListActionPerformed
      new ContactListForm(contacts).setVisible(true);   // TODO add your handling code here:
     }//GEN-LAST:event_miListActionPerformed
+
+    private void cmbCountryItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCountryItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbCountryItemStateChanged
 
     public static void main(String args[]) {
         FlatLightLaf.setup();
