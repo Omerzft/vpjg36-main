@@ -64,6 +64,9 @@ private Contact readContact(ResultSet rs) throws SQLException {
         rs.getString("Email")
     );
 }
+// % и _ връщат всички 59 контакта, защото в LIKE те са заместващи знаци:
+// % е "всякакъв текст", а _ е "един знак". Кодът не ги екранира,
+// затова не се търсят като символи, а пасват на всичко.
 public List<Contact> searchByName(String text) throws SQLException {
         String sql = """
                      SELECT CustomerId, FirstName, LastName, City, Country, Email
