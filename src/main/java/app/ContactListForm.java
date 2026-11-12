@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 public class ContactListForm extends javax.swing.JFrame {
-     
+     private final int total;
     private DefaultComboBoxModel<String> cities;
   private final ContactRepositroy contactRepo;
 private String searchText = ""; 
@@ -38,12 +38,13 @@ private String searchText = "";
     private List<Contact> shown; //ще пази видимите елементи в таблицата
     
    public ContactListForm(List<Contact> contacts,
-                       ContactRepositroy contactRepo) {
+                       ContactRepositroy contactRepo,
+                       int total) {
     initComponents();
 
     this.contacts = contacts;
     this.contactRepo = contactRepo;
-
+  this.total = total;
     cities = new DefaultComboBoxModel<>();
     cities.addElement("Всички");
 
@@ -86,11 +87,14 @@ private void show(List<Contact> data) {
         }
     }
     lblCount.setText("Показани: " + listModel.getSize()
-            + " от " + contacts.size());
+            + " от " + total);
 }
-
+private void removeFromContacts(List<Contact> toDelete) {
+    contacts.removeIf(x -> toDelete.stream()
+            .anyMatch(d -> d.getId() == x.getId()));
+}
 private void applyFilter() {
-    String country = selectedCity();     
+    String country = selectedCity();
     List<Contact> result;
     try {
         result = contactRepo.search(country, searchText);
@@ -99,6 +103,8 @@ private void applyFilter() {
             "Грешка в базата", JOptionPane.ERROR_MESSAGE);
         return;
     }
+    // hide contacts that were deleted from the in-memory list
+    result.removeIf(c -> contacts.stream().noneMatch(x -> x.getId() == c.getId()));
     if (chkEmail.isSelected()) {
         result.removeIf(c -> c.getEmail() == null || c.getEmail().isBlank());
     }
@@ -122,7 +128,7 @@ private void applyFilter() {
             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (answer == JOptionPane.YES_OPTION) {
             //изтриваме обекта от масива с данни
-            contacts.remove(c);
+            removeFromContacts(List.of(c));
             applyFilter(); //презареждаме данните в таблицата и листа
         }
     }
@@ -334,10 +340,9 @@ if (selected.isEmpty()) {
 int answer = JOptionPane.showConfirmDialog(this,
  "Да се изтрият ли " + selected.size() + " контакта?", "Изтриване",
  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-if (answer == JOptionPane.YES_OPTION) {contacts.removeAll(selected);
+if (answer == JOptionPane.YES_OPTION) {removeFromContacts(selected);
 applyFilter();
 
- // TODO 2: изтрийте от данните и прерисувайте
 }  // TODO add your handling code here:
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -387,7 +392,7 @@ for (int viewRow : rows) {
 
 int answer = JOptionPane.showConfirmDialog(this, "Изтриване на " + toDelete.size() + " контакта?", "Потвърждение", JOptionPane.YES_NO_OPTION);
 if (answer == JOptionPane.YES_OPTION) {
- contacts.removeAll(toDelete);
+removeFromContacts(toDelete);
  applyFilter();
 }
 

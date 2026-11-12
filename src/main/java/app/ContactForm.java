@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class ContactForm extends javax.swing.JFrame {
-
+private int total; 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactForm.class.getName());
     private boolean bOnlyReqFields = false;
     private JLabel lblHint; //декларираме, че такъв етикет ще има, но е null
@@ -50,15 +50,15 @@ statusTimer.setRepeats(false);
         //addSamples();
         loadFromDb();
     }
-    private void loadFromDb() {
- try { int count = contactRepo.count();
- 
-lblStatus.setText("В базата има " + contactRepo.count() + " контакта.");
-contacts.addAll(contactRepo.loadAll());
- } catch (SQLException ex) {
- JOptionPane.showMessageDialog(this, ex.getMessage(),
- "Грешка в базата", JOptionPane.ERROR_MESSAGE);
- }
+  private void loadFromDb() {
+    try {
+        total = contactRepo.count();
+        lblStatus.setText("В базата има " + total + " контакта.");
+        contacts.addAll(contactRepo.loadAll());
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Грешка в базата", JOptionPane.ERROR_MESSAGE);
+    }
 }
 
     private void clearFields(){
@@ -454,7 +454,7 @@ if (choice == 0) {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void miListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miListActionPerformed
-     new ContactListForm(contacts, contactRepo).setVisible(true);   // TODO add your handling code here:
+     new ContactListForm(contacts, contactRepo, total).setVisible(true);   // TODO add your handling code here:
     }//GEN-LAST:event_miListActionPerformed
 
     private void cmbCountryItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCountryItemStateChanged
