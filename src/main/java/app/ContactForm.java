@@ -454,7 +454,7 @@ if (choice == 0) {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void miListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miListActionPerformed
-     new ContactListForm(contacts).setVisible(true);   // TODO add your handling code here:
+     new ContactListForm(contacts, contactRepo).setVisible(true);   // TODO add your handling code here:
     }//GEN-LAST:event_miListActionPerformed
 
     private void cmbCountryItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCountryItemStateChanged

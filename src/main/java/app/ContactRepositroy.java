@@ -87,4 +87,51 @@ public List<Contact> searchByName(String text) throws SQLException {
         }
         return list;
     }
+public List<Contact> search(String country, String text) throws SQLException {
+    String sql = """
+        SELECT CustomerId, FirstName, LastName, City, Country, Email
+        FROM Customers
+        WHERE (? IS NULL OR Country = ?)
+          AND (FirstName LIKE ? OR LastName LIKE ?)
+        ORDER BY LastName, FirstName
+        """;
+    String pattern = "%" + text + "%";
+
+    List<Contact> list = new ArrayList<>();
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, country);   // may be null
+        stmt.setString(2, country);   // same value again
+        stmt.setString(3, pattern);   // FirstName
+        stmt.setString(4, pattern);   // LastName
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Contact c = new Contact(
+                    rs.getInt("CustomerId"),
+                    rs.getString("FirstName"),
+                    rs.getString("LastName"),
+                    rs.getString("City"),
+                    rs.getString("Country"),
+                    rs.getString("Email")
+                );
+                list.add(c);
+            }
+        }
+    }
+    return list;
+}
+public List<String> countries() throws SQLException {
+    String sql = """
+        SELECT DISTINCT Country FROM Customers
+        WHERE Country IS NOT NULL
+        ORDER BY Country
+        """;
+    List<String> list = new ArrayList<>();
+    try (PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+            list.add(rs.getString(1));
+        }
+    }
+    return list;
+}
 }

@@ -1,5 +1,7 @@
 
 package app;
+import static java.awt.SystemColor.text;
+import java.sql.SQLException;     
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +17,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 public class ContactListForm extends javax.swing.JFrame {
-    
+     
     private DefaultComboBoxModel<String> cities;
+  private final ContactRepositroy contactRepo;
+private String searchText = ""; 
   
-    
     private boolean shortView = false;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContactListForm.class.getName());
     private final List<Contact> contacts;
@@ -34,21 +37,38 @@ public class ContactListForm extends javax.swing.JFrame {
     };
     private List<Contact> shown; //ще пази видимите елементи в таблицата
     
-    public ContactListForm(List<Contact> contacts) {
+   public ContactListForm(List<Contact> contacts,
+                       ContactRepositroy contactRepo) {
     initComponents();
-    cities = new DefaultComboBoxModel<>();
-    String[] arrCities = {"Всички", "София", "Пловдив", "Варна"};
-        for (String c : arrCities){
-    cities.addElement(c);
-}
-    cmbCity.setModel(cities);
+
     this.contacts = contacts;
+    this.contactRepo = contactRepo;
+
+    cities = new DefaultComboBoxModel<>();
+    cities.addElement("Всички");
+
+    try {
+        for (String c : contactRepo.countries()) {
+            cities.addElement(c);
+        }
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Грешка в базата", JOptionPane.ERROR_MESSAGE);
+    }
+
+    cmbCity.setModel(cities);
+
     setLocationRelativeTo(null);
+
     listModel = new DefaultListModel<>();
     lstContacts.setModel(listModel);
     tblContacts.setModel(tableModel);
-    tblContacts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+    tblContacts.setSelectionMode(
+            ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
     applyFilter();
+
     refreshTimer = new Timer(5000, e -> applyFilter());
     refreshTimer.start();
 }
@@ -70,20 +90,19 @@ private void show(List<Contact> data) {
 }
 
 private void applyFilter() {
- String city = selectedCity();
- List<Contact> result = new ArrayList<>();
-  contacts.sort((a, b) ->
-          a.getLastName().compareToIgnoreCase(b.getLastName()));
- for (Contact c : contacts) {
-  boolean cityOk = city == null || c.getCity().equalsIgnoreCase(city);
-boolean emailOk = !chkEmail.isSelected() || !c.getEmail().isBlank();
-if (cityOk && emailOk) {
- result.add(c);
-}
-
-        
- }
- show(result);
+    String country = selectedCity();     
+    List<Contact> result;
+    try {
+        result = contactRepo.search(country, searchText);
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(),
+            "Грешка в базата", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    if (chkEmail.isSelected()) {
+        result.removeIf(c -> c.getEmail() == null || c.getEmail().isBlank());
+    }
+    show(result);
 }
    
     private Contact selected() {
@@ -107,6 +126,8 @@ if (cityOk && emailOk) {
             applyFilter(); //презареждаме данните в таблицата и листа
         }
     }
+    
+   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -375,35 +396,10 @@ if (answer == JOptionPane.YES_OPTION) {
     }//GEN-LAST:event_btnDelete1ActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-String input = JOptionPane.showInputDialog(this, "Въведено име"); 
-if(input != null){
-    boolean found = false;
-        input=input.trim().toLowerCase();
-                for( Contact c : contacts){
-                    String word =  c.getFirstName();
-                    String wordt = c.getLastName();
-                    boolean ok = word.toLowerCase().contains(input);
-                   boolean okt = wordt.toLowerCase().contains(input);
-                    
-                  if (ok || okt){
-                       int modelRow = shown.indexOf(c);
-                     found=true;
-    if (modelRow == -1) { JOptionPane.showMessageDialog(this, "Съществува, но филтърът го крие",
-            "търсене", JOptionPane.WARNING_MESSAGE);
-       
-    } else {
-        int viewRow = tblContacts.convertRowIndexToView(modelRow);
-       tblContacts.setRowSelectionInterval( viewRow,viewRow ); // select this row in tblContacts
-    }
-    
-    break;
-    
-                }
-                }if(!found){
-        JOptionPane.showMessageDialog(this, "няма съществуващ контакт с името",
-            "търсене", JOptionPane.WARNING_MESSAGE);
-    }
-                }    
+ String input = JOptionPane.showInputDialog(this, "Въведено име", searchText);
+    if (input == null) return;
+    searchText = input.trim();
+    applyFilter();  
 // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
 
@@ -497,7 +493,6 @@ private String selectedCity(){
     }
     return item;
 }     
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CSVBtn;
