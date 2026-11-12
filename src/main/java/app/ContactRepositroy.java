@@ -50,11 +50,41 @@ try(PreparedStatement stmt = conn.prepareStatement(sql);
   }
     
 }
-        return null;
+        return result;
 
 
 }
-
+private Contact readContact(ResultSet rs) throws SQLException {
+    return new Contact(
+        rs.getInt("CustomerId"),
+        rs.getString("FirstName"),
+        rs.getString("LastName"),
+        rs.getString("City"),
+        rs.getString("Country"),
+        rs.getString("Email")
+    );
 }
-
-
+public List<Contact> searchByName(String text) throws SQLException {
+        String sql = """
+                     SELECT CustomerId, FirstName, LastName, City, Country, Email
+                     FROM Customers
+                     WHERE FirstName LIKE ? OR LastName LIKE ?
+                     ORDER BY LastName, FirstName
+                     """;
+        // TODO 1: the % signs go around the text, not around ? in the query
+        String pattern = "%" + text + "%";
+ 
+        List<Contact> list = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // TODO 2: the same pattern for both ?
+            stmt.setString(1, pattern);   // FirstName
+            stmt.setString(2, pattern);   // LastName
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(readContact(rs));
+                }
+            }
+        }
+        return list;
+    }
+}
