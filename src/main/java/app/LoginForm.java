@@ -4,6 +4,11 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 
 public class LoginForm extends javax.swing.JFrame {
    int br=0; 
@@ -21,8 +26,11 @@ private ImageIcon scaled(Image image, int w, int h) {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginForm.class.getName());
 
     private Color normalBg;
-   
-    public LoginForm() {
+   private final Connect db;
+
+    
+    public LoginForm(Connect db) {
+        this.db = db;
         initComponents();
         loadDefaultLock();
         setLocationRelativeTo(null);
@@ -118,7 +126,7 @@ private ImageIcon scaled(Image image, int w, int h) {
         pwdPass.setBackground(normalBg);
         if(user.equals(expectedUser) 
             && Arrays.equals(pass, expectedPass)){
-            new ContactForm().setVisible(true);
+            new ContactForm(db).setVisible(true);
             this.dispose();
         }
         else{
@@ -141,12 +149,29 @@ br++;
         Arrays.fill(expectedPass, '\0');
     }//GEN-LAST:event_btnLoginActionPerformed
 
-    public static void main(String args[]) {
-        FlatLightLaf.setup();
-        
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new LoginForm().setVisible(true));
-    }
+  public static void main(String[] args) {
+ FlatLightLaf.setup();
+ java.awt.EventQueue.invokeLater(() -> {
+ Path file = Path.of("chinook.db");
+ if (!Files.exists(file)) {
+ JOptionPane.showMessageDialog(null,
+ "Няма файл с база:\n" + file.toAbsolutePath(),
+"Грешка при стартиране", JOptionPane.ERROR_MESSAGE);
+ return;
+ }
+ Connect db;
+ try {
+ db = new Connect();
+ } catch (SQLException ex) {
+ JOptionPane.showMessageDialog(null,
+ "Няма връзка с базата.\n" + ex.getMessage(),
+"Грешка при стартиране", JOptionPane.ERROR_MESSAGE);
+ return;
+ }
+ Runtime.getRuntime().addShutdownHook(new Thread(() -> db.close()));
+new LoginForm(db).setVisible(true);
+ });
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogin;

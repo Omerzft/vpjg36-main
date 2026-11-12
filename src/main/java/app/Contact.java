@@ -8,6 +8,7 @@ public class Contact {
     private String city;
     private String country;
     private String email;
+    private int id;
 
     public Contact(String firstName, String lastName, String city, String country, String email) {
         this.firstName = firstName;
@@ -16,7 +17,15 @@ public class Contact {
         this.country = country;
         this.email = email;
     }
+public Contact(int id , String firstName, String lastName,String city, String country, String email){
+    this(firstName, lastName, city, country, email); //извиква конструктора с 5 параметъра
+this.id = id;
+}
 
+    public int getId() {
+        return id;
+    }
+    
     public String getFirstName() {
         return firstName;
     }

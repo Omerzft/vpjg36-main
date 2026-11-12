@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 public class ContactForm extends javax.swing.JFrame {
 
@@ -16,9 +20,11 @@ public class ContactForm extends javax.swing.JFrame {
     private final List<Contact> contacts = new ArrayList<>();
     private Color normalBg;
     private Timer statusTimer;
-    
-    public ContactForm() {
-        
+    private Connect db;
+    private final ContactRepositroy contactRepo;
+    public ContactForm(Connect db) {
+        this.db = db;
+        contactRepo = new ContactRepositroy(this.db);
         initComponents();
         statusTimer = new Timer(3000, e -> lblStatus.setText("Готово."));
 statusTimer.setRepeats(false);
@@ -41,9 +47,20 @@ statusTimer.setRepeats(false);
         }
         loadDefaultAvatar();
         normalBg = txtFirstName.getBackground();
-        addSamples();
+        //addSamples();
+        loadFromDb();
     }
-    
+    private void loadFromDb() {
+ try { int count = contactRepo.count();
+ 
+lblStatus.setText("В базата има " + contactRepo.count() + " контакта.");
+contacts.addAll(contactRepo.loadAll());
+ } catch (SQLException ex) {
+ JOptionPane.showMessageDialog(this, ex.getMessage(),
+ "Грешка в базата", JOptionPane.ERROR_MESSAGE);
+ }
+}
+
     private void clearFields(){
         txtFirstName.setText("");
         txtLastName.setText("");
@@ -444,10 +461,31 @@ if (choice == 0) {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbCountryItemStateChanged
 
-    public static void main(String args[]) {
-        FlatLightLaf.setup();
-        java.awt.EventQueue.invokeLater(() -> new ContactForm().setVisible(true));
-    }
+   public static void main(String[] args) {
+ FlatLightLaf.setup();
+ java.awt.EventQueue.invokeLater(() -> {
+ Path file = Path.of("chinook.db");
+ if (!Files.exists(file)) {
+ JOptionPane.showMessageDialog(null,
+ "Няма файл с база:\n" + file.toAbsolutePath(),
+"Грешка при стартиране", JOptionPane.ERROR_MESSAGE);
+ return;
+ }
+ Connect db;
+ try {
+ db = new Connect();
+ } catch (SQLException ex) {
+ JOptionPane.showMessageDialog(null,
+ "Няма връзка с базата.\n" + ex.getMessage(),
+"Грешка при стартиране", JOptionPane.ERROR_MESSAGE);
+ return;
+ }
+ Runtime.getRuntime().addShutdownHook(new Thread(() -> db.close()));
+new ContactForm(db).setVisible(true);
+
+ });
+}
+
  private void showStatus(String text, int ms) {
     lblStatus.setText(text);
     statusTimer.setInitialDelay(ms);
